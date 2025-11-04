@@ -1,0 +1,45 @@
+### 1. GET all clients
+### (You should get an empty array the first time)
+GET http://localhost:3000/api/clients
+
+###
+### 2. POST (create) a new client
+POST http://localhost:3000/api/clients
+Content-Type: application/json
+
+{
+  "name": "First Client",
+  "email": "firstclient@test.com"
+}
+
+###
+### 3. POST another new client
+POST http://localhost:3000/api/clients
+Content-Type: application/json
+
+{
+  "name": "Second Client",
+  "email": "secondclient@test.com"
+}
+
+###
+### 4. GET all projects
+### (This will be empty the first time)
+GET http://localhost:3000/api/projects
+
+###
+### 5. POST (create) a new project
+###
+### !!! ACTION REQUIRED !!!
+### 1. Run the "GET all clients" request (from above).
+### 2. Copy the "id" of one of your clients.
+### 3. Paste that "id" as the value for "clientId" below.
+###
+POST http://localhost:3000/api/projects
+Content-Type: application/json
+
+{
+  "title": "My First Wedding Shoot",
+  "invoiceAmount": 50000,
+  "clientId": "cmhk1f6240001l6zgo02mjuya" 
+}

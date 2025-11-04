@@ -1,0 +1,45 @@
+// 1, DB CONNECTION
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2. PRISMA CLIENT GENERATOR
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 3. DATA MODEL: The Photographer
+model User {
+  id  String  @id @default(cuid())
+  email  String?  @unique
+  name  String?
+
+  clients Client[]
+}
+
+// 4. DATA MODEL: The Client
+model Client {
+  id  String  @id @default(cuid())
+  email  String?  @unique
+  name  String?
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  projects Project[]
+}
+
+// 5. DATA MODEL: The Project
+model Project {
+  id            String    @id @default(cuid())
+  title         String
+  status        String    @default("BOOKED")
+  invoiceAmount Int       @default(0)
+  
+  client        Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId      String
+}
+
+
+
