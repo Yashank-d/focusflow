@@ -58,4 +58,44 @@ The project is currently in **Phase 1: Backend Complete.**
 
   * `GET /api/clients`: Fetches all clients for a user.
 
-  * `POST
+  * `POST /api/clients`: Creates a new client.
+
+  * `GET /api/projects`: Fetches all projects (and includes their related client data).
+
+  * `POST /api/projects`: Creates a new project linked to a specific client.
+
+* **Security:** The database connection string is secured using environment variables (`.env`).
+
+### Getting Started
+
+To run this project locally, you will need to:
+
+1. Clone the repository.
+
+2. Run `npm install` to install all dependencies.
+
+3. Create your own Supabase account and a new Postgres database.
+
+4. Create a `.env` file in the root and add your `DATABASE_URL` connection string.
+
+5. Run `npm run db:migrate` to push the schema to your database.
+
+6. Run `npm run dev` to start the development server.
+
+### Next Steps (Roadmap)
+
+* **Phase 2: Admin Dashboard (UI)**
+
+  * Build the React frontend for the photographer's dashboard.
+
+  * Create components to *consume* the APIs we just built.
+
+  * Build forms (with `react-hook-form` and `zod`) to create new clients and projects from the UI.
+
+* **Phase 3: Auth & Client Portal**
+
+  * Implement `NextAuth.js` for secure photographer login.
+
+  * Add `Supabase Storage` for file uploads.
+
+  * Build the dynamic, client-facing "payment gate" page (`/client/[projectId]`).
