@@ -1,20 +1,12 @@
 import { NextResponse } from "next/server";
+import { getProjectsWithClients } from "@/lib/project-service";
 import client from "@/lib/db";
 
 const HARDCODED_USER_ID = "cmhk0vt5n0000l6nkjbglafwe";
 
 export async function GET() {
   try {
-    const projects = await client.project.findMany({
-      where: {
-        client: {
-          userId: HARDCODED_USER_ID,
-        },
-      },
-      include: {
-        client: true,
-      },
-    });
+    const projects = await getProjectsWithClients();
     return NextResponse.json(projects);
   } catch (error) {
     let errorMessage = "An unknown error occurred.";
