@@ -1,12 +1,23 @@
 import client from "@/lib/db";
-
-const HARDCODED_USERID = "cmhk0vt5n0000l6nkjbglafwe";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function getClients() {
+  const session = await getServerSession(authOptions);
+
+  // 2. Guard Clause
+  if (!session?.user?.id) {
+    console.error("No session found. User must be logged in.");
+    return [];
+  }
+
+  // 3. Get the real user ID
+  const userId = session.user.id;
+
   try {
     const clients = await client.client.findMany({
       where: {
-        userId: HARDCODED_USERID,
+        userId: userId,
       },
       include: {
         _count: {

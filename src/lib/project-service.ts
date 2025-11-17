@@ -1,13 +1,22 @@
 import client from "@/lib/db";
-
-const HARDCODED_USER_ID = "cmhk0vt5n0000l6nkjbglafwe";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function getProjectsWithClients() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    console.error("No session found. User must be logged in.");
+    return [];
+  }
+
+  const userId = session.user.id;
+
   try {
     const projects = await client.project.findMany({
       where: {
         client: {
-          userId: HARDCODED_USER_ID,
+          userId: userId,
         },
       },
       include: {

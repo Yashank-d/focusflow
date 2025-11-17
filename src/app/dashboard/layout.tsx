@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import LoginButton from "@/components/LoginButton";
 
 export default function DashboardLayout({
   children,
@@ -12,7 +13,7 @@ export default function DashboardLayout({
         <div className="p-6">
           <h2 className="text-2xl font-bold text-gray-800">FocusFLow</h2>
         </div>
-        <nav className="mt-4">
+        <nav className="mt-6 grow">
           <Link
             href="/dashboard/projects"
             className="block px-6 py-3 text-gray-700 hover:bg-gray-200"
@@ -26,6 +27,9 @@ export default function DashboardLayout({
             Clients
           </Link>
         </nav>
+        <div className="p-6 border-t border-gray-200">
+          <LoginButton />
+        </div>
       </div>
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-8">

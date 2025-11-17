@@ -1,7 +1,19 @@
 import { NextResponse } from "next/server";
 import client from "@/lib/db";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json(
+      { ok: false, message: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+  const userId = session.user.id;
+
   try {
     const { projectId }: { projectId: string } = await request.json();
 
@@ -12,16 +24,27 @@ export async function POST(request: Request) {
       );
     }
 
-    const project = await client.project.findUnique({
-      where: { id: projectId },
+    // --- SECURITY CHECK ---
+    // Ensure this project belongs to the logged-in user
+    const project = await client.project.findFirst({
+      where: {
+        id: projectId,
+        client: {
+          userId: userId,
+        },
+      },
     });
 
     if (!project) {
       return NextResponse.json(
-        { ok: false, message: "Project not found" },
+        {
+          ok: false,
+          message: "Project not found or you do not have permission.",
+        },
         { status: 404 }
       );
     }
+    // --- END SECURITY CHECK ---
 
     await client.project.delete({
       where: { id: projectId },
@@ -34,11 +57,7 @@ export async function POST(request: Request) {
       errorMessage = error.message;
     }
     return NextResponse.json(
-      {
-        ok: false,
-        message: "Failed to delete project.",
-        error: errorMessage,
-      },
+      { ok: false, message: "Failed to delete project.", error: errorMessage },
       { status: 500 }
     );
   }

@@ -1,60 +1,49 @@
 import { NextResponse } from "next/server";
-import { getProjectsWithClients } from "@/lib/project-service";
 import client from "@/lib/db";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
-const HARDCODED_USER_ID = "cmhk0vt5n0000l6nkjbglafwe";
+// --- POST to create a new project ---
+export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
 
-export async function GET() {
-  try {
-    const projects = await getProjectsWithClients();
-    return NextResponse.json(projects);
-  } catch (error) {
-    let errorMessage = "An unknown error occurred.";
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    }
+  if (!session?.user?.id) {
     return NextResponse.json(
-      {
-        ok: false,
-        message: "Failed to fetch projects.",
-        error: errorMessage,
-      },
-      { status: 500 }
+      { ok: false, message: "Unauthorized" },
+      { status: 401 }
     );
   }
-}
+  const userId = session.user.id;
 
-export async function POST(request: Request) {
   try {
     const body = await request.json();
-
     const { title, invoiceAmount, clientId } = body;
 
     if (!title || !clientId) {
       return NextResponse.json(
-        {
-          ok: false,
-          message: "Title and clientId are required.",
-        },
+        { ok: false, message: "Title and clientId are required." },
         { status: 400 }
       );
     }
 
+    // --- SECURITY CHECK ---
+    // Make sure the client they're assigning this to
+    // *also* belongs to them.
     const existingClient = await client.client.findFirst({
       where: {
         id: clientId,
-        userId: HARDCODED_USER_ID,
+        userId: userId,
       },
     });
+
     if (!existingClient) {
       return NextResponse.json(
-        {
-          ok: false,
-          message: "Invalid client ID.",
-        },
+        { ok: false, message: "Invalid client ID." },
         { status: 404 }
       );
     }
+    // --- END SECURITY CHECK ---
+
     const newProject = await client.project.create({
       data: {
         title: title,
@@ -65,18 +54,15 @@ export async function POST(request: Request) {
         client: true,
       },
     });
+
     return NextResponse.json(newProject, { status: 201 });
   } catch (error) {
-    let errorMessage = "An unknown error occured.";
+    let errorMessage = "An unknown error occurred.";
     if (error instanceof Error) {
       errorMessage = error.message;
     }
     return NextResponse.json(
-      {
-        ok: false,
-        message: "Falied to create project.",
-        error: errorMessage,
-      },
+      { ok: false, message: "Failed to create project.", error: errorMessage },
       { status: 500 }
     );
   }

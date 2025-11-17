@@ -26,7 +26,7 @@ export default function CreateClientModal() {
     setError(null);
 
     try {
-      const response = await fetch("api/clients", {
+      const response = await fetch("/api/clients", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export default function CreateClientModal() {
         onClick={() => setIsOpen(true)}
         className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors"
       >
-        + Add New CLient
+        + Add New Client
       </button>
 
       {isOpen && (
@@ -118,7 +118,7 @@ export default function CreateClientModal() {
                   className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Creating..." : "Create CLient"}
+                  {isLoading ? "Creating..." : "Create Client"}
                 </button>
               </div>
             </form>
