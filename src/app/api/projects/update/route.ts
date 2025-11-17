@@ -15,8 +15,15 @@ export async function POST(request: Request) {
   const userId = session.user.id;
 
   try {
-    const { projectId, title, status, invoiceAmount, clientId } =
-      await request.json();
+    const {
+      projectId,
+      title,
+      status,
+      invoiceAmount,
+      clientId,
+      deliveryLink,
+      sampleImageUrls,
+    } = await request.json();
 
     if (!projectId) {
       return NextResponse.json(
@@ -56,6 +63,8 @@ export async function POST(request: Request) {
         status: status,
         invoiceAmount: invoiceAmount,
         clientId: clientId,
+        deliveryLink: deliveryLink,
+        sampleImageUrls: sampleImageUrls,
       },
     });
 

@@ -41,6 +41,9 @@ model Project {
   title         String
   status        String    @default("BOOKED")
   invoiceAmount Int       @default(0)
+
+  deliveryLink  String?
+  sampleImageUrls String[]
   
   client        Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId      String

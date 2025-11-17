@@ -12,4 +12,6 @@ export interface ProjectWithClient {
   invoiceAmount: number;
   clientId: string;
   client: Client;
+  deliveryLink: string;
+  sampleImageUrls: string;
 }
