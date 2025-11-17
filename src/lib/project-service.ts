@@ -29,3 +29,20 @@ export async function getProjectsWithClients() {
     throw new Error("Failed to fetch projects.");
   }
 }
+
+export async function getPublicProjectById(projectId: string) {
+  try {
+    const project = await client.project.findUnique({
+      where: {
+        id: projectId,
+      },
+      include: {
+        client: true,
+      },
+    });
+    return project;
+  } catch (error) {
+    console.error("Failed to fetch public project:", error);
+    return null;
+  }
+}
