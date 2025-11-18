@@ -1,9 +1,15 @@
 import { getClients } from "@/lib/client-service";
 import ClientCard from "@/components/ClientCard";
 import CreateClientModal from "@/components/CreateClientModal";
+import { Client } from "@/types";
 
 export default async function ClientsPage() {
-  const clients = await getClients();
+  type ClientWithCount = Client & {
+    _count: {
+      projects: number;
+    };
+  };
+  const clients = (await getClients()) as ClientWithCount[];
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
