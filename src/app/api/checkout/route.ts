@@ -24,8 +24,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const amountInPaise = project.invoiceAmount * 100;
+
     const order = await razorpay.orders.create({
-      amount: project.invoiceAmount,
+      amount: amountInPaise,
       currency: "INR",
       receipt: project.id,
     });
@@ -33,7 +35,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       orderId: order.id,
-      amount: project.invoiceAmount,
+      amount: amountInPaise,
       currency: "INR",
     });
   } catch (error) {

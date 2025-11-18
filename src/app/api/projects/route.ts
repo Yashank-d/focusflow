@@ -3,7 +3,6 @@ import client from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
-// --- POST to create a new project ---
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
 
@@ -26,9 +25,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // --- SECURITY CHECK ---
-    // Make sure the client they're assigning this to
-    // *also* belongs to them.
+
     const existingClient = await client.client.findFirst({
       where: {
         id: clientId,
@@ -42,7 +39,6 @@ export async function POST(request: Request) {
         { status: 404 }
       );
     }
-    // --- END SECURITY CHECK ---
 
     const newProject = await client.project.create({
       data: {
