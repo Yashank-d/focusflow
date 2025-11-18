@@ -12,8 +12,9 @@ It's a single, all-in-one application that allows a photographer to:
 * Create and track projects for each client.
 * Update project status (e.g., "Booked," "Editing," "Review").
 * Set an invoice amount.
-* (Coming Soon) Upload photos to a secure, gated gallery.
-* (Coming Soon) Send a unique link to a client, who can only view their photos *after* they have paid the invoice.
+* Send a unique "Gated Link" to a client.
+* Clients can view a "Sneak Peek" bento grid of their photos.
+* Clients can pay the invoice directly via **Razorpay** to unlock their full gallery download.
 
 ### Tech Stack
 
@@ -25,37 +26,34 @@ This project is a modern, full-stack, type-safe application.
 * **Database:** [PostgreSQL](https://www.postgresql.org/) (hosted on [Supabase](https://supabase.com/))
 * **ORM:** [Prisma](https://www.prisma.io/) (for 100% type-safe database queries)
 * **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-* **Auth:** [NextAuth.js](https://next-auth.js.org/) *(Coming Soon)*
-* **File Storage:** [Supabase Storage](https://supabase.com/storage) *(Coming Soon)*
+* **Auth:** [NextAuth.js](https://next-auth.js.org/) (Google Login)
+* **Payments:** [Razorpay](https://razorpay.com/) (Integrated Gateway & Webhooks)
 
-### Current Status (Phase 2 In Progress)
+### Current Status (Phase 7 Complete)
 
-The project has a complete, functional backend and a "Create" / "Read" (CR) admin dashboard.
+The project is fully functional, secure, and deployed. It supports the entire lifecycle from project creation to client payment and delivery.
 
 **✅ Features Implemented:**
 
 **Backend & Database:**
-
-* **Database Schema:** Full relational schema designed in Prisma for `User`, `Client`, and `Project`.
-* **Live Database:** A live Postgres database is provisioned and hosted on Supabase.
-* **Database Migrations:** A full migration history is set up.
-* **Prisma Client:** A type-safe, singleton client is implemented (`/src/lib/db.ts`).
-* **Backend API:** A complete, functional RESTful API is built.
-    * `GET /api/clients`: Fetches all clients for a user.
-    * `POST /api/clients`: Creates a new client with validation.
-    * `GET /api/projects`: Fetches all projects (and includes their related client data).
-    * `POST /api/projects`: Creates a new project linked to a specific client.
-* **Security:** The database connection string is secured using environment variables (`.env`).
+* **Database Schema:** Full relational schema designed in Prisma for `User`, `Client`, and `Project`. Added fields for `deliveryLink` and `sampleImageUrls`.
+* **Live Database:** A live Postgres database is provisioned and hosted on Supabase, using connection pooling for Vercel.
+* **Prisma Client:** A type-safe, singleton client is implemented.
+* **Backend API:** A complete RESTful API (`GET`, `POST`, `UPDATE`, `DELETE`) for Clients and Projects.
+* **Payment API:** Implemented `/api/checkout` to create Razorpay orders securely.
+* **Webhooks:** Implemented `/api/webhook/razorpay` to verify signatures and automatically update project status to "PAID" in the database.
+* **Security:** All API routes are protected with server-side session checks.
 
 **Frontend (UI) & Data Flow:**
+* **Authentication:** Full Google Login integration with NextAuth.js.
+* **Multi-Page Dashboard:** Protected admin dashboard for managing clients and projects.
+* **Client Portal:** A public-facing, dynamic page (`/client/[id]`) that renders different views based on payment status (Locked vs. Unlocked).
+* **Payment Integration:** Integrated Razorpay's standard checkout modal for seamless payments.
+* **Pro UX:** Implemented optimistic UI updates, loading states, error handling, and `router.refresh()` for instant feedback.
 
-* **Server Components:** Built the main dashboard page using **Next.js Server Components** for fast, server-side data fetching.
-* **Efficient Data Fetching:** Data is fetched *directly* in Server Components (bypassing HTTP) for maximum performance.
-* **Reusable Components:** Created reusable, styled UI components like **ProjectCard** using **Tailwind CSS**.
-* **Client Components:** Developed interactive **Client Components** (using `"use client";`) for all user-driven actions.
-* **Interactive Modals:** Built "Create Client" and "Create Project" modals using **`useState`** for state management.
-* **Client-Side Data Fetching:** Implemented data fetching within a Client Component (using **`useEffect`**) to populate the "Assign to Client" dropdown.
-* **Professional UX:** Implemented a full user feedback loop with **loading states**, **API error handling** (shown in the UI), and seamless data revalidation using **`router.refresh()`** (no full-page reloads).
+**DevOps & Deployment:**
+* **Vercel Deployment:** The app is live on Vercel with all environment variables configured.
+* **Production Config:** Fixed Google OAuth callback URLs and database connection pooling issues for a stable production build.
 
 ### Getting Started
 
@@ -64,20 +62,13 @@ To run this project locally, you will need to:
 1.  Clone the repository.
 2.  Run `npm install` to install all dependencies.
 3.  Create your own Supabase account and a new Postgres database.
-4.  Create a `.env` file in the root and add your `DATABASE_URL` connection string.
+4.  Create a `.env` file in the root and add your `DATABASE_URL`, `GOOGLE_ID`, `GOOGLE_SECRET`, `NEXTAUTH_SECRET`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET`.
 5.  Run `npm run db:migrate` to push the schema to your database.
 6.  Run `npm run dev` to start the development server.
 
 ### Next Steps (Roadmap)
 
-* **Phase 2 (Continued): Finish CRUD**
-    * Implement **"Update" (U)** functionality (e.g., an "Edit Project" modal to change a project's `status`).
-    * Implement **"Delete" (D)** functionality (e.g., "Delete" buttons on projects and clients).
-* **Phase 2 (Polish):**
-    * Refactor forms to use **react-hook-form** and **zod** for advanced, schema-based validation.
-* **Phase 3: Auth & Client Portal**
-    * Implement `NextAuth.js` for secure photographer login.
-    * Add `Supabase Storage` for file uploads.
-    * Build the dynamic, client-facing "payment gate" page (`/client/[projectId]`).
-
-    
+* **Phase 8: UI/UX Polish**
+    * Overhaul the design to match a clean, modern aesthetic (Glassmorphism/Minimalist).
+    * Implement a consistent design system with custom fonts and colors.
+    * Add a "Home" dashboard with revenue stats and charts.
