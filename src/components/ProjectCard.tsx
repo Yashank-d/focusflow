@@ -1,7 +1,7 @@
 import { ProjectWithClient } from "@/types";
 import DeleteProjectButton from "./DeleteProjectButton";
-import React from "react";
 import EditProjectModal from "./EditProjectModal";
+import CopyLinkButton from "./CopyLinkButton";
 
 interface ProjectCardProps {
   project: ProjectWithClient;
@@ -26,7 +26,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </span>
         </div>
       </div>
-      <div className="border-t border-gray-100 pt-4 mt-4 flex justify-end gap-4">
+      <div className="border-t border-gray-100 pt-4 mt-4 flex items-center justify-between">
+        <CopyLinkButton projectId={project.id} />
         <EditProjectModal project={project} />
         <DeleteProjectButton projectId={project.id} />
       </div>
