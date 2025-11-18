@@ -79,3 +79,5 @@ To run this project locally, you will need to:
     * Implement `NextAuth.js` for secure photographer login.
     * Add `Supabase Storage` for file uploads.
     * Build the dynamic, client-facing "payment gate" page (`/client/[projectId]`).
+
+    
