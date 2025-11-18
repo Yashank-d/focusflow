@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
 import Image from "next/image";
-
+import Script from "next/script";
 import { ProjectWithClient } from "@/types";
 
 export default function ClientPage() {
@@ -13,14 +14,13 @@ export default function ClientPage() {
   const [project, setProject] = useState<ProjectWithClient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
   useEffect(() => {
     if (!projectId) return;
 
-    // --- REPLACE THIS FUNCTION ---
     const fetchProject = async () => {
       try {
-        // 6. Fetch from our NEW public API route with a QUERY PARAMETER
         const res = await fetch(`/api/public/projects?projectId=${projectId}`, {
           cache: "no-store",
         });
@@ -43,6 +43,52 @@ export default function ClientPage() {
     fetchProject();
   }, [projectId]);
 
+  const handlePayment = async () => {
+    setIsPaymentLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId: project?.id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok)
+        throw new Error(data.message || "Failed to initiate payment");
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: data.currency,
+        name: "FocusFlow",
+        description: `Payment for ${project?.title}`,
+        order_id: data.orderId,
+        handler: function (response: any) {
+          alert(
+            `Payment Successful! Payment ID: ${response.razorpay_payment_id}`
+          );
+          window.location.reload();
+        },
+        prefill: {
+          name: project?.client.name,
+          email: project?.client.email,
+        },
+        theme: {
+          color: "#16a34a",
+        },
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+    } catch (err) {
+      console.error(err);
+      alert("Payment initialization failed. Please try again.");
+    } finally {
+      setIsPaymentLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <main className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -63,6 +109,7 @@ export default function ClientPage() {
 
   return (
     <main className="flex items-center justify-center min-h-screen bg-gray-100 p-8">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden">
         {isPaid ? (
           <div className="p-12 text-center">
@@ -129,11 +176,15 @@ export default function ClientPage() {
               <p className="text-5xl font-extrabold text-gray-900 mb-6">
                 ₹{project.invoiceAmount}
               </p>
-              <button className="w-full bg-green-600 text-white font-bold px-10 py-4 rounded-lg shadow-lg hover:bg-green-700 transition-colors">
-                Pay Now to Unlock
+              <button
+                onClick={handlePayment}
+                disabled={isPaymentLoading}
+                className="w-full bg-green-600 text-white font-bold px-10 py-4 rounded-lg shadow-lg hover:bg-green-700 transition-colors"
+              >
+                {isPaymentLoading ? "Processing..." : "Pay Now to Unlock"}
               </button>
               <p className="text-xs text-gray-500 mt-4 text-center">
-                Payment processing is coming soon...
+                Secured by Razorpay
               </p>
             </div>
           </div>

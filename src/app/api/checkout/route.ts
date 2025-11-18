@@ -1,0 +1,46 @@
+import { NextResponse } from "next/server";
+import { razorpay } from "@/lib/razorpay";
+import client from "@/lib/db";
+
+export async function POST(request: Request) {
+  try {
+    const { projectId } = await request.json();
+
+    if (!projectId) {
+      return NextResponse.json(
+        { ok: false, message: "Project ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const project = await client.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      return NextResponse.json(
+        { ok: false, message: "Project not found" },
+        { status: 404 }
+      );
+    }
+
+    const order = await razorpay.orders.create({
+      amount: project.invoiceAmount,
+      currency: "INR",
+      receipt: project.id,
+    });
+
+    return NextResponse.json({
+      ok: true,
+      orderId: order.id,
+      amount: project.invoiceAmount,
+      currency: "INR",
+    });
+  } catch (error) {
+    console.error("Error creating Razorpay order:", error);
+    return NextResponse.json(
+      { ok: false, message: "Failed to create order" },
+      { status: 500 }
+    );
+  }
+}

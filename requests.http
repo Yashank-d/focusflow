@@ -43,3 +43,13 @@ Content-Type: application/json
   "invoiceAmount": 50000,
   "clientId": "cmhk1f6240001l6zgo02mjuya" 
 }
+
+###
+### 6. Test Razorpay Checkout
+### Replace 'YOUR_PROJECT_ID' with a real Project ID from your database
+POST http://localhost:3000/api/checkout
+Content-Type: application/json
+
+{
+  "projectId": "cmi4gerjx0006l6d8eqhph3bf"
+}
