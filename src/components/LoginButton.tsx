@@ -25,9 +25,9 @@ export default function LoginButton() {
   return (
     <button
       onClick={() => signIn("google")}
-      className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
+      className="bg-white text-black font-medium px-10 py-3.5 rounded-full hover:bg-gray-200 hover:scale-105 transition-all duration-500 shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)]"
     >
-      Log In with Google
+      Get Started
     </button>
   );
 }
