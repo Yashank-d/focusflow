@@ -55,12 +55,24 @@ body {
   }
 }
 
-
 .razorpay-container {
-  background-color: rgba(0, 0, 0, 0.6) !important; 
-  backdrop-filter: blur(4px); 
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
 }
 
 .razorpay-container iframe {
   background: transparent !important;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.25s ease-out;
 }

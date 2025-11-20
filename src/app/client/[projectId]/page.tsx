@@ -165,10 +165,11 @@ export default function ClientPage() {
             </div>
           ) : (
             <div
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[450px] animate-fade-in-up"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up"
               style={{ animationDelay: "0.2s" }}
             >
-              <div className="lg:col-span-2 flex flex-col h-full">
+              {/* LEFT SIDE — SNEAK PEEK IMAGES */}
+              <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center justify-between px-1 mb-2">
                   <div className="flex items-center gap-2 text-white/80">
                     <ImageIcon size={16} />
@@ -179,52 +180,47 @@ export default function ClientPage() {
                   </span>
                 </div>
 
-                <div className="grid grid-rows-2 grid-cols-2 gap-3 flex-1 h-full">
-                  {project.sampleImageUrls[0] ? (
-                    <div className="col-span-2 row-span-1 relative rounded-2xl border border-white/10 overflow-hidden group">
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Big Top Image */}
+                  <div className="col-span-2 aspect-[3/1.7] lg:aspect-[3/1.2] rounded-2xl border border-white/10 overflow-hidden relative">
+                    {project.sampleImageUrls[0] ? (
                       <Image
                         src={project.sampleImageUrls[0]}
                         alt="Preview 1"
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="object-cover"
                       />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                    </div>
-                  ) : (
-                    <div className="col-span-2 row-span-1 bg-white/5 rounded-2xl border border-white/10" />
-                  )}
-                  {project.sampleImageUrls[1] ? (
-                    <div className="col-span-1 row-span-1 relative rounded-2xl border border-white/10 overflow-hidden group">
-                      <Image
-                        src={project.sampleImageUrls[1]}
-                        alt="Preview 2"
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div className="col-span-1 row-span-1 bg-white/5 rounded-2xl border border-white/10" />
-                  )}
+                    ) : (
+                      <div className="w-full h-full bg-white/5" />
+                    )}
+                  </div>
 
-                  {project.sampleImageUrls[2] ? (
-                    <div className="col-span-1 row-span-1 relative rounded-2xl border border-white/10 overflow-hidden group">
-                      <Image
-                        src={project.sampleImageUrls[2]}
-                        alt="Preview 3"
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div className="col-span-1 row-span-1 bg-white/5 rounded-2xl border border-white/10" />
+                  {/* Two Smaller Images */}
+                  {[project.sampleImageUrls[1], project.sampleImageUrls[2]].map(
+                    (url, i) => (
+                      <div
+                        key={i}
+                        className="aspect-square lg:aspect-4/3 rounded-2xl border border-white/10 overflow-hidden relative"
+                      >
+                        {url ? (
+                          <Image
+                            src={url}
+                            alt={`Preview ${i + 2}`}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-white/5" />
+                        )}
+                      </div>
+                    )
                   )}
                 </div>
               </div>
 
-              <div className="lg:col-span-1 flex flex-col h-full">
-                <div className="h-7 mb-2"></div>
-
-                <div className="h-full bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden group flex flex-col justify-between">
+              {/* RIGHT SIDE — PAYMENT CARD */}
+              <div className="lg:col-span-1">
+                <div className="h-full bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between">
                   <div className="absolute -top-20 -right-20 w-48 h-48 bg-blue-500/10 blur-[60px] rounded-full pointer-events-none" />
 
                   <div>
@@ -234,6 +230,7 @@ export default function ClientPage() {
                         Gallery Locked
                       </span>
                     </div>
+
                     <h3 className="text-2xl font-serif text-white mb-2">
                       Unlock Access
                     </h3>
@@ -242,6 +239,7 @@ export default function ClientPage() {
                       link for your entire high-resolution collection.
                     </p>
                   </div>
+
                   <div>
                     <div className="space-y-1 mb-5">
                       <p className="text-[10px] text-gray-500 uppercase tracking-wide font-medium">
