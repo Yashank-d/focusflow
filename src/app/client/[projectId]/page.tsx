@@ -6,6 +6,8 @@ import { useParams, notFound } from "next/navigation";
 import Image from "next/image";
 import Script from "next/script";
 import { ProjectWithClient } from "@/types";
+import { Lock, CheckCircle, Image as ImageIcon, Loader2 } from "lucide-react";
+import GradientButton from "@/components/ui/GradientButton";
 
 export default function ClientPage() {
   const params = useParams();
@@ -24,22 +26,15 @@ export default function ClientPage() {
         const res = await fetch(`/api/public/projects?projectId=${projectId}`, {
           cache: "no-store",
         });
-
-        if (!res.ok) {
-          throw new Error("Project not found");
-        }
-
+        if (!res.ok) throw new Error("Project not found");
         const data: ProjectWithClient = await res.json();
         setProject(data);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        }
+        if (err instanceof Error) setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchProject();
   }, [projectId]);
 
@@ -53,7 +48,6 @@ export default function ClientPage() {
       });
 
       const data = await res.json();
-
       if (!res.ok)
         throw new Error(data.message || "Failed to initiate payment");
 
@@ -61,13 +55,10 @@ export default function ClientPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: data.amount,
         currency: data.currency,
-        name: "FocusFlow",
-        description: `Payment for ${project?.title}`,
+        name: "FocusFlow Studio",
+        description: `Unlock Gallery: ${project?.title}`,
         order_id: data.orderId,
-        handler: function (response: any) {
-          alert(
-            `Payment Successful! Payment ID: ${response.razorpay_payment_id}`
-          );
+        handler: function () {
           window.location.reload();
         },
         prefill: {
@@ -75,7 +66,7 @@ export default function ClientPage() {
           email: project?.client.email,
         },
         theme: {
-          color: "#16a34a",
+          color: "#3b82f6",
         },
       };
 
@@ -91,104 +82,174 @@ export default function ClientPage() {
 
   if (isLoading) {
     return (
-      <main className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-xl">Loading your gallery...</div>
+      <main className="flex items-center justify-center min-h-screen bg-brand-bg text-white">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-blue-500" size={40} />
+          <p className="text-gray-400 font-light tracking-wide">
+            Loading Gallery...
+          </p>
+        </div>
       </main>
     );
   }
 
-  if (error) {
-    notFound();
-  }
-
-  if (!project || !project.client) {
-    notFound();
+  if (error || !project || !project.client) {
+    return notFound();
   }
 
   const isPaid = project.status === "PAID";
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-100 p-8">
+    <main className="min-h-screen w-full bg-brand-bg relative text-gray-100 overflow-x-hidden selection:bg-blue-500/30">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <div className="w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden">
-        {isPaid ? (
-          <div className="p-12 text-center">
-            <h1 className="text-4xl font-bold text-green-600 mb-4">
-              Thank you for your payment!
-            </h1>
-            <p className="text-xl text-gray-700 mb-8">
-              Your full gallery is now unlocked. We loved working with you,{" "}
-              {project.client.name}!
-            </p>
-            <a
-              href={project.deliveryLink || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-blue-600 text-white font-bold px-10 py-4 rounded-lg shadow-lg hover:bg-blue-700 transition-colors"
-            >
-              Download Your Photos
-            </a>
-          </div>
-        ) : (
-          <div className="p-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Your Gallery is Ready!
-            </h1>
-            <p className="text-xl text-gray-700 mb-8">
-              Hi, {project.client.name}! Here is a sneak peek of your project,
-              &#34;
-              {project.title}&#34;.
-            </p>
+      <div className="fixed top-0 left-0 w-full h-[40vh] bg-linear-to-b from-blue-900/10 to-transparent pointer-events-none" />
+      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-purple-900/10 blur-[100px] pointer-events-none" />
 
-            <h2 className="text-2xl font-semibold mb-4">Sneak Peek</h2>
-            {project.sampleImageUrls.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                {project.sampleImageUrls.map((url, index) => (
-                  <div
-                    key={index}
-                    className={`bg-gray-200 rounded-lg shadow-inner overflow-hidden ${
-                      index === 0 ? "md:col-span-2 md:row-span-2" : ""
-                    }`}
-                  >
-                    <Image
-                      src={url}
-                      alt={`Sample ${index + 1}`}
-                      width={400}
-                      height={400}
-                      className="w-full h-auto object-cover aspect-square"
-                      placeholder="blur"
-                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOMDY2vBwAClgE6sD2x5QAAAABJRU5ErkJggg=="
-                    />
-                  </div>
-                ))}
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-5xl">
+          {/* Header */}
+          <div className="text-center mb-10 animate-fade-in-up">
+            <span className="inline-block px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[10px] text-blue-300 tracking-[0.2em] uppercase backdrop-blur-md mb-4">
+              {isPaid ? "Gallery Unlocked" : "Gallery Preview"}
+            </span>
+            <h1 className="text-4xl md:text-5xl font-serif text-transparent bg-clip-text bg-linear-to-b from-white via-white to-gray-500 mb-3">
+              {project.title}
+            </h1>
+            <p className="text-gray-400 font-light text-base">
+              Prepared for {project.client.name}
+            </p>
+          </div>
+
+          {isPaid ? (
+            <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-10 text-center relative overflow-hidden animate-fade-in max-w-2xl mx-auto">
+              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-emerald-500 to-transparent"></div>
+              <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-5 border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                <CheckCircle size={32} />
               </div>
-            ) : (
-              <p className="text-gray-500 mb-8">
-                No samples have been added yet.
+              <h2 className="text-2xl font-serif text-white mb-3">
+                Payment Received
+              </h2>
+              <p className="text-gray-400 max-w-md mx-auto mb-8 text-sm leading-relaxed">
+                Thank you! You can now access your full high-resolution gallery.
               </p>
-            )}
-
-            <div className="bg-gray-50 p-6 rounded-lg shadow-inner">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Unlock Your Full Gallery
-              </h3>
-              <p className="text-lg text-gray-600 mb-2">Total Amount Due:</p>
-              <p className="text-5xl font-extrabold text-gray-900 mb-6">
-                ₹{project.invoiceAmount}
-              </p>
-              <button
-                onClick={handlePayment}
-                disabled={isPaymentLoading}
-                className="w-full bg-green-600 text-white font-bold px-10 py-4 rounded-lg shadow-lg hover:bg-green-700 transition-colors"
+              <a
+                href={project.deliveryLink || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 rounded-full font-bold text-sm hover:scale-105 transition-all duration-300"
               >
-                {isPaymentLoading ? "Processing..." : "Pay Now to Unlock"}
-              </button>
-              <p className="text-xs text-gray-500 mt-4 text-center">
-                Secured by Razorpay
-              </p>
+                <span>Download Full Gallery</span>
+              </a>
             </div>
-          </div>
-        )}
+          ) : (
+            <div
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[450px] animate-fade-in-up"
+              style={{ animationDelay: "0.2s" }}
+            >
+              <div className="lg:col-span-2 flex flex-col h-full">
+                <div className="flex items-center justify-between px-1 mb-2">
+                  <div className="flex items-center gap-2 text-white/80">
+                    <ImageIcon size={16} />
+                    <h3 className="text-sm font-medium">Sneak Peek</h3>
+                  </div>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-widest">
+                    Sample Shots
+                  </span>
+                </div>
+
+                <div className="grid grid-rows-2 grid-cols-2 gap-3 flex-1 h-full">
+                  {project.sampleImageUrls[0] ? (
+                    <div className="col-span-2 row-span-1 relative rounded-2xl border border-white/10 overflow-hidden group">
+                      <Image
+                        src={project.sampleImageUrls[0]}
+                        alt="Preview 1"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                    </div>
+                  ) : (
+                    <div className="col-span-2 row-span-1 bg-white/5 rounded-2xl border border-white/10" />
+                  )}
+                  {project.sampleImageUrls[1] ? (
+                    <div className="col-span-1 row-span-1 relative rounded-2xl border border-white/10 overflow-hidden group">
+                      <Image
+                        src={project.sampleImageUrls[1]}
+                        alt="Preview 2"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+                  ) : (
+                    <div className="col-span-1 row-span-1 bg-white/5 rounded-2xl border border-white/10" />
+                  )}
+
+                  {project.sampleImageUrls[2] ? (
+                    <div className="col-span-1 row-span-1 relative rounded-2xl border border-white/10 overflow-hidden group">
+                      <Image
+                        src={project.sampleImageUrls[2]}
+                        alt="Preview 3"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+                  ) : (
+                    <div className="col-span-1 row-span-1 bg-white/5 rounded-2xl border border-white/10" />
+                  )}
+                </div>
+              </div>
+
+              <div className="lg:col-span-1 flex flex-col h-full">
+                <div className="h-7 mb-2"></div>
+
+                <div className="h-full bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden group flex flex-col justify-between">
+                  <div className="absolute -top-20 -right-20 w-48 h-48 bg-blue-500/10 blur-[60px] rounded-full pointer-events-none" />
+
+                  <div>
+                    <div className="flex items-center gap-2 mb-4 text-blue-300/80">
+                      <Lock size={16} />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">
+                        Gallery Locked
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-serif text-white mb-2">
+                      Unlock Access
+                    </h3>
+                    <p className="text-gray-400 text-xs leading-relaxed">
+                      Complete the payment to instantly receive the download
+                      link for your entire high-resolution collection.
+                    </p>
+                  </div>
+                  <div>
+                    <div className="space-y-1 mb-5">
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wide font-medium">
+                        Total Due
+                      </p>
+                      <p className="text-4xl font-serif text-white tracking-tight">
+                        ₹{project.invoiceAmount.toLocaleString()}
+                      </p>
+                    </div>
+
+                    <GradientButton
+                      onClick={handlePayment}
+                      isLoading={isPaymentLoading}
+                      className="w-full py-3 text-sm shadow-lg shadow-blue-900/20"
+                    >
+                      Pay Now to Unlock
+                    </GradientButton>
+
+                    <div className="mt-4 flex items-center justify-center gap-2 text-gray-600 opacity-60 hover:opacity-100 transition-opacity">
+                      <CheckCircle size={12} />
+                      <span className="text-[9px] font-medium uppercase tracking-wider">
+                        Secure Payment via Razorpay
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

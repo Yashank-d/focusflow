@@ -2,7 +2,7 @@ import LoginButton from "@/components/LoginButton";
 
 export default function WelcomePage() {
   return (
-    <main className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#020617]">
+    <main className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-brand-bg">
       <div className="absolute top-0 left-0 w-full h-[50vh] bg-(image:--image-glow) pointer-events-none"></div>
 
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>

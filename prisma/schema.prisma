@@ -26,7 +26,7 @@ model User {
 // 4. DATA MODEL: The Client
 model Client {
   id  String  @id @default(cuid())
-  email  String?  @unique
+  email  String? 
   name  String?
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)

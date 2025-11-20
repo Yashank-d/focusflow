@@ -1,12 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-
   --font-sans: var(--font-inter), ui-sans-serif, system-ui;
   --font-serif: var(--font-playfair), ui-serif, Georgia;
 
   --animate-fade-in: fadeIn 1.2s ease-out forwards;
   --animate-fade-in-up: fadeInUp 1s ease-out forwards;
+
+  --color-brand-bg: #020617;
+  --color-brand-text-main: #f8fafc;
+  --color-brand-text-muted: #94a3b8;
+
+  --color-glass-bg: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-highlight: rgba(255, 255, 255, 0.15);
 
   --image-clarity: linear-gradient(to bottom, #0f172a 0%, #020617 100%);
   --image-glow: radial-gradient(
@@ -24,6 +31,8 @@ body {
   background: #020617;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  background-blend-mode: overlay;
 }
 
 @keyframes fadeIn {
@@ -44,4 +53,14 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+.razorpay-container {
+  background-color: rgba(0, 0, 0, 0.6) !important; 
+  backdrop-filter: blur(4px); 
+}
+
+.razorpay-container iframe {
+  background: transparent !important;
 }

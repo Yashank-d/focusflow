@@ -1,6 +1,5 @@
 import React from "react";
-import Link from "next/link";
-import LoginButton from "@/components/LoginButton";
+import Sidebar from "@/components/Sidebar";
 
 export default function DashboardLayout({
   children,
@@ -8,34 +7,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-gray-100">
-      <div className="w-64 bg-white shadow-md">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-800">FocusFLow</h2>
-        </div>
-        <nav className="mt-6 grow">
-          <Link
-            href="/dashboard/projects"
-            className="block px-6 py-3 text-gray-700 hover:bg-gray-200"
-          >
-            Projects
-          </Link>
-          <Link
-            href="/dashboard/clients"
-            className="block px-6 py-3 text-gray-700 hover:bg-gray-200"
-          >
-            Clients
-          </Link>
-        </nav>
-        <div className="p-6 border-t border-gray-200">
-          <LoginButton />
-        </div>
-      </div>
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-8">
-          {children}
-        </main>
-      </div>
+    <div className="min-h-screen w-full flex relative text-brand-text-main">
+
+      <div className="fixed top-0 left-0 w-full h-[40vh] bg-(image:--image-glow) opacity-40 pointer-events-none z-0"></div>
+
+      <Sidebar />
+
+      <main className="flex-1 md:ml-64 relative z-10 p-8 md:p-12 overflow-y-auto h-screen scrollbar-hide">
+        <div className="max-w-7xl mx-auto animate-fade-in">{children}</div>
+      </main>
     </div>
   );
 }

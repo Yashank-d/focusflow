@@ -1,9 +1,14 @@
 "use client";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
+import { createPortal } from "react-dom"; // <--- IMPORT THIS
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
+import GradientButton from "@/components/ui/GradientButton";
+import GlassInput from "@/components/ui/GlassInput";
 
 export default function CreateClientModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false); // <--- NEW STATE
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -12,6 +17,10 @@ export default function CreateClientModal() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const resetForm = () => {
     setName("");
@@ -28,9 +37,7 @@ export default function CreateClientModal() {
     try {
       const response = await fetch("/api/clients", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email }),
       });
 
@@ -46,85 +53,81 @@ export default function CreateClientModal() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unknown error occoured");
+        setError("An unknown error occurred");
       }
       setIsLoading(false);
     }
   };
 
+  const modalContent = (
+    <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 animate-fade-in">
+      <div
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        onClick={() => setIsOpen(false)}
+      />
+
+      <div className="bg-[#0f172a] border border-white/10 p-8 rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden z-10">
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-purple-500/50 to-transparent"></div>
+
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-serif text-white">Add Client</h2>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <GlassInput
+            label="Client Name"
+            id="name"
+            placeholder="e.g., John & Jane Doe"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <GlassInput
+            label="Client Email"
+            id="email"
+            type="email"
+            placeholder="client@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          {error && (
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-200 text-sm">
+              {error}
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-4">
+            <GradientButton
+              type="button"
+              variant="secondary"
+              onClick={() => setIsOpen(false)}
+            >
+              Cancel
+            </GradientButton>
+            <GradientButton type="submit" isLoading={isLoading}>
+              Create Client
+            </GradientButton>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors"
-      >
-        + Add New Client
-      </button>
+      <GradientButton onClick={() => setIsOpen(true)}>
+        + New Client
+      </GradientButton>
 
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md z-50">
-            <h2 className="text-2xl font-bold mb-4">Create a New Client</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 font-medium mb-2"
-                  htmlFor="name"
-                >
-                  Client Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  className="w-full px-3 border border-gray-300 rounded-lg"
-                  placeholder="e.g., Jhon & Jane DOe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="mb-6">
-                <label
-                  className="block text-gray-700 font-medium mb-2"
-                  htmlFor="email"
-                >
-                  Client Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  placeholder="e.g., weddingexample.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-
-              {error && (
-                <div className="text-red-600 text-sm mb-4">Error: {error}</div>
-              )}
-              <div className="flex justify-end gap-4">
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100"
-                  disabled={isLoading}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-blue-700"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Creating..." : "Create Client"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {isOpen && mounted && createPortal(modalContent, document.body)}
     </>
   );
 }

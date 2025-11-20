@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Link as LinkIcon, Check } from "lucide-react";
 
 interface CopyLinkButtonProps {
   projectId: string;
@@ -24,11 +25,17 @@ export default function CopyLinkButton({ projectId }: CopyLinkButtonProps) {
   return (
     <button
       onClick={handleCopy}
-      className={`text-sm font-medium transition-colors ${
-        isCopied ? "text-green-600" : "text-blue-600 hover:text-blue-800"
-      }`}
+      className={`
+        flex items-center gap-2 text-sm font-medium transition-all duration-300 px-3 py-1.5 rounded-lg
+        ${
+          isCopied
+            ? "bg-emerald-500/10 text-emerald-400"
+            : "text-gray-400 hover:text-white hover:bg-white/5"
+        }
+      `}
     >
-      {isCopied ? "✓ Copied!" : "Copy Link"}
+      {isCopied ? <Check size={14} /> : <LinkIcon size={14} />}
+      {isCopied ? "Copied" : "Copy Link"}
     </button>
   );
 }
