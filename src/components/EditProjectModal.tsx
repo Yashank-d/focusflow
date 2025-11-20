@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent, useEffect } from "react";
-import { createPortal } from "react-dom"; 
+import { createPortal } from "react-dom";
 import { Client, ProjectWithClient } from "@/types";
 import { useRouter } from "next/navigation";
 import { Edit2, X } from "lucide-react";
@@ -13,7 +13,6 @@ interface EditProjectModalProps {
 
 export default function EditProjectModal({ project }: EditProjectModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false); 
   const router = useRouter();
 
   const [title, setTitle] = useState(project.title);
@@ -34,7 +33,6 @@ export default function EditProjectModal({ project }: EditProjectModalProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true); 
     if (isOpen) {
       const fetchClients = async () => {
         try {
@@ -253,7 +251,9 @@ export default function EditProjectModal({ project }: EditProjectModalProps) {
       </button>
 
       {/* USE PORTAL TO RENDER MODAL OUTSIDE THE CARD */}
-      {isOpen && mounted && createPortal(modalContent, document.body)}
+      {isOpen &&
+        typeof window !== "undefined" &&
+        createPortal(modalContent, document.body)}
     </>
   );
 }

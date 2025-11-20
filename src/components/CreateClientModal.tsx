@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { createPortal } from "react-dom"; // <--- IMPORT THIS
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
@@ -8,7 +8,6 @@ import GlassInput from "@/components/ui/GlassInput";
 
 export default function CreateClientModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,10 +16,6 @@ export default function CreateClientModal() {
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const resetForm = () => {
     setName("");
@@ -127,7 +122,9 @@ export default function CreateClientModal() {
         + New Client
       </GradientButton>
 
-      {isOpen && mounted && createPortal(modalContent, document.body)}
+      {isOpen &&
+        typeof window !== "undefined" &&
+        createPortal(modalContent, document.body)}
     </>
   );
 }

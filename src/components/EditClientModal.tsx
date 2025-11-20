@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
-import { createPortal } from "react-dom"; 
+import { useState, FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Client } from "@/types";
 import { Edit2, X } from "lucide-react";
@@ -14,17 +14,12 @@ interface EditClientModalProps {
 
 export default function EditClientModal({ client }: EditClientModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false); 
   const router = useRouter();
 
   const [name, setName] = useState(client.name || "");
   const [email, setEmail] = useState(client.email || "");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setMounted(true); // <--- ACTIVATE ON MOUNT
-  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -126,7 +121,9 @@ export default function EditClientModal({ client }: EditClientModalProps) {
       </button>
 
       {/* PORTAL RENDERING */}
-      {isOpen && mounted && createPortal(modalContent, document.body)}
+      {isOpen &&
+        typeof window !== "undefined" &&
+        createPortal(modalContent, document.body)}
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent, useEffect } from "react";
-import { createPortal } from "react-dom"; 
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Client } from "@/types";
 import { X } from "lucide-react";
@@ -9,7 +9,6 @@ import GlassInput from "@/components/ui/GlassInput";
 
 export default function CreateProjectModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false); 
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -21,7 +20,6 @@ export default function CreateProjectModal() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true); 
     if (isOpen) {
       const fetchClients = async () => {
         try {
@@ -79,7 +77,6 @@ export default function CreateProjectModal() {
     setError(null);
     setIsLoading(false);
   };
-
 
   const modalContent = (
     <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 animate-fade-in">
@@ -177,7 +174,9 @@ export default function CreateProjectModal() {
       </GradientButton>
 
       {/* TELEPORT THE MODAL OUT */}
-      {isOpen && mounted && createPortal(modalContent, document.body)}
+      {isOpen &&
+        typeof window !== "undefined" &&
+        createPortal(modalContent, document.body)}
     </>
   );
 }
