@@ -1,15 +1,16 @@
 "use client";
 
 import { useSession, signIn, signOut } from "next-auth/react";
-import { LogOut } from "lucide-react"; 
+import { LogOut } from "lucide-react";
 import Image from "next/image";
+import Skeleton from "@/components/ui/Skeleton";
 
 export default function LoginButton() {
   const { data: session, status } = useSession();
 
   // Loading State
   if (status === "loading") {
-    return <div className="w-full h-12 rounded-xl bg-white/5 animate-pulse" />;
+    return <Skeleton className="w-full h-12 rounded-xl" />;
   }
 
   // STATE 1: LOGGED IN (Sidebar Mode)
