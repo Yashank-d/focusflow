@@ -8,7 +8,7 @@ import GlassInput from "@/components/ui/GlassInput";
 
 export default function CreateClientModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false); // <--- NEW STATE
+  const [mounted, setMounted] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
