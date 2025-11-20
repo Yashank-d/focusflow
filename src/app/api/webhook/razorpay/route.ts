@@ -1,54 +1,49 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import prisma from "@/lib/db";
+import client from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.text();
-
+    const rawBody = await request.text();
     const signature = request.headers.get("x-razorpay-signature");
+
     if (!signature) {
       return NextResponse.json(
-        { messgae: "No signature provided" },
+        { message: "No signature provided" },
         { status: 400 }
       );
     }
 
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
-      .update(body)
+      .update(rawBody)
       .digest("hex");
 
-    if (expectedSignature !== signature) {
+    // Constant-time comparison
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+
+    if (!isValid) {
       return NextResponse.json(
         { message: "Invalid signature" },
         { status: 400 }
       );
     }
-    const event = JSON.parse(body);
+
+    const event = JSON.parse(rawBody);
 
     if (event.event === "order.paid") {
       const order = event.payload.order.entity;
-
       const projectId = order.receipt;
 
-      console.log(`Payment success for project: ${projectId}`);
-      await prisma.project.update({
+      await client.project.update({
         where: { id: projectId },
-        data: {
-          status: "PAID",
-        },
+        data: { status: "PAID" },
       });
     }
-    if (!event || !event.event) {
-      return NextResponse.json(
-        { ok: false, message: "Invalid event" },
-        { status: 400 }
-      );
-    }
-    if (event.event !== "order.paid") {
-      return NextResponse.json({ ok: true, message: "Ignored event" });
-    }
+
     return NextResponse.json({ status: "ok" });
   } catch (error) {
     console.error("Webhook Error:", error);
