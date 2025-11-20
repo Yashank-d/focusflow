@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     // --- SECURITY CHECK ---
     // Ensure this client belongs to the logged-in user before deleting
-    const existingClient = await client.client.findFirst({
+    const existingClient = await prisma.client.findFirst({
       where: {
         id: clientId,
         userId: userId,
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     }
     // --- END SECURITY CHECK ---
 
-    await client.client.delete({
+    await prisma.client.delete({
       where: { id: clientId },
     });
 

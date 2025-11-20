@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 
 export async function GET(request: Request) {
   try {
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const project = await client.project.findUnique({
+    const project = await prisma.project.findUnique({
       where: { id: projectId },
       include: { client: true },
     });

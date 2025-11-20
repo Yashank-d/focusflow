@@ -1,4 +1,4 @@
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -13,7 +13,7 @@ export async function getClients() {
   const userId = session.user.id;
 
   try {
-    const clients = await client.client.findMany({
+    const clients = await prisma.client.findMany({
       where: {
         userId: userId,
       },

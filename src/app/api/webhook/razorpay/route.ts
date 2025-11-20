@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       const projectId = order.receipt;
 
       console.log(`Payment success for project: ${projectId}`);
-      await client.project.update({
+      await prisma.project.update({
         where: { id: projectId },
         data: {
           status: "PAID",

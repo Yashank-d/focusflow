@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { razorpay } from "@/lib/razorpay";
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const project = await client.project.findUnique({
+    const project = await prisma.project.findUnique({
       where: { id: projectId },
     });
 

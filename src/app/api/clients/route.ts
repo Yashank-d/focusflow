@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -16,7 +16,7 @@ export async function GET() {
   const userId = session.user.id;
 
   try {
-    const clients = await client.client.findMany({
+    const clients = await prisma.client.findMany({
       where: {
         userId: userId, 
       },
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     }
 
     // Check for duplicate email *for this user*
-    const existingClient = await client.client.findFirst({
+    const existingClient = await prisma.client.findFirst({
       where: {
         email: email,
         userId: userId,
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const newClient = await client.client.create({
+    const newClient = await prisma.client.create({
       data: {
         name: name,
         email: email,

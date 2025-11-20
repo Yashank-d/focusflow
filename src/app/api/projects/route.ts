@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     }
 
 
-    const existingClient = await client.client.findFirst({
+    const existingClient = await prisma.client.findFirst({
       where: {
         id: clientId,
         userId: userId,
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const newProject = await client.project.create({
+    const newProject = await prisma.project.create({
       data: {
         title: title,
         invoiceAmount: invoiceAmount || 0,

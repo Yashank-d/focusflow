@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import client from '@/lib/db';
+import prisma from '@/lib/db';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     // --- SECURITY CHECK ---
     // Ensure this client belongs to the logged-in user before updating
-    const existingClient = await client.client.findFirst({
+    const existingClient = await prisma.client.findFirst({
       where: {
         id: clientId,
         userId: userId,
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     }
     // --- END SECURITY CHECK ---
 
-    const updatedClient = await client.client.update({
+    const updatedClient = await prisma.client.update({
       where: {
         id: clientId,
       },

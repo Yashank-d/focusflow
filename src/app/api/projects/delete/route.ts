@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     // --- SECURITY CHECK ---
     // Ensure this project belongs to the logged-in user
-    const project = await client.project.findFirst({
+    const project = await prisma.project.findFirst({
       where: {
         id: projectId,
         client: {
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     }
     // --- END SECURITY CHECK ---
 
-    await client.project.delete({
+    await prisma.project.delete({
       where: { id: projectId },
     });
 

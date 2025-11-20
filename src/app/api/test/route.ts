@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import client from "@/lib/db"; // Import our new singleton client!
+import prisma from "@/lib/db"; // Import our new singleton client!
 
 // This is a GET request handler
 export async function GET() {
   try {
     // Let's test our database connection!
     // We will ask Prisma to just count how many users are in the User table.
-    const userCount = await client.user.count();
+    const userCount = await prisma.user.count();
 
     // If it works, send a "JSON response" back
     return NextResponse.json({

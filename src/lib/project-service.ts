@@ -1,4 +1,4 @@
-import client from "@/lib/db";
+import prisma from "@/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -13,7 +13,7 @@ export async function getProjectsWithClients() {
   const userId = session.user.id;
 
   try {
-    const projects = await client.project.findMany({
+    const projects = await prisma.project.findMany({
       where: {
         client: {
           userId: userId,
@@ -32,7 +32,7 @@ export async function getProjectsWithClients() {
 
 export async function getPublicProjectById(projectId: string) {
   try {
-    const project = await client.project.findUnique({
+    const project = await prisma.project.findUnique({
       where: {
         id: projectId,
       },
