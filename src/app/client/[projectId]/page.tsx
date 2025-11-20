@@ -13,7 +13,7 @@ export default function ClientPage() {
   const params = useParams();
   const projectId = params.projectId as string;
 
-    const router = useRouter();
+  const router = useRouter();
 
   const [project, setProject] = useState<ProjectWithClient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +42,9 @@ export default function ClientPage() {
 
   const handlePayment = async () => {
     setIsPaymentLoading(true);
+
     try {
+      // Step 1: Create Razorpay Order
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -50,33 +52,50 @@ export default function ClientPage() {
       });
 
       const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || "Failed to initiate payment");
+      if (!res.ok) throw new Error(data.message);
 
+      // Step 2: Razorpay Checkout Options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        order_id: data.orderId,
         amount: data.amount,
         currency: data.currency,
         name: "FocusFlow Studio",
-        description: `Unlock Gallery: ${project?.title}`,
-        order_id: data.orderId,
-        handler: function () {
-          window.location.reload();
+        description: `Payment for: ${project?.title}`,
+        handler: async (response: any) => {
+          // Step 3: Verify Payment Signature on Server
+          const verifyRes = await fetch("/api/checkout/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              projectId: project?.id,
+              order_id: response.razorpay_order_id,
+              payment_id: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+
+          if (verifyData.ok) {
+            window.location.reload(); // Refresh gallery
+          } else {
+            alert("Payment verification failed");
+          }
         },
+
         prefill: {
           name: project?.client.name,
           email: project?.client.email,
         },
-        theme: {
-          color: "#3b82f6",
-        },
+        theme: { color: "#4F46E5" },
       };
 
-      const paymentObject = new (window as any).Razorpay(options);
-      paymentObject.open();
+      const razorpayObj = new (window as any).Razorpay(options);
+      razorpayObj.open();
     } catch (err) {
       console.error(err);
-      alert("Payment initialization failed. Please try again.");
+      alert("Payment failed. Try again.");
     } finally {
       setIsPaymentLoading(false);
     }
@@ -96,9 +115,9 @@ export default function ClientPage() {
   }
 
   if (error || !project || !project.client) {
-  router.replace("/404");
-  return null;
-}
+    router.replace("/404");
+    return null;
+  }
 
   const isPaid = project.status === "PAID";
 

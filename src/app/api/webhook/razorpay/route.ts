@@ -40,6 +40,15 @@ export async function POST(request: Request) {
         },
       });
     }
+    if (!event || !event.event) {
+      return NextResponse.json(
+        { ok: false, message: "Invalid event" },
+        { status: 400 }
+      );
+    }
+    if (event.event !== "order.paid") {
+      return NextResponse.json({ ok: true, message: "Ignored event" });
+    }
     return NextResponse.json({ status: "ok" });
   } catch (error) {
     console.error("Webhook Error:", error);
