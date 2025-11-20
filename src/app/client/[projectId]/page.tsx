@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, notFound } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Script from "next/script";
 import { ProjectWithClient } from "@/types";
@@ -12,6 +12,8 @@ import GradientButton from "@/components/ui/GradientButton";
 export default function ClientPage() {
   const params = useParams();
   const projectId = params.projectId as string;
+
+    const router = useRouter();
 
   const [project, setProject] = useState<ProjectWithClient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,8 +96,9 @@ export default function ClientPage() {
   }
 
   if (error || !project || !project.client) {
-    return notFound();
-  }
+  router.replace("/404");
+  return null;
+}
 
   const isPaid = project.status === "PAID";
 
