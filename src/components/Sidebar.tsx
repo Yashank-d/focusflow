@@ -6,8 +6,8 @@ import { FolderOpen, Users, X } from "lucide-react"; // Keep lucide-react
 import LoginButton from "@/components/LoginButton";
 
 const navItems = [
-  { label: "Projects", icon: FolderOpen, href: "/dashboard/projects" },
-  { label: "Clients", icon: Users, href: "/dashboard/clients" },
+  { label: "Projects", icon: FolderOpen, href: "/dashboard/projects", id: "nav-projects" },
+  { label: "Clients", icon: Users, href: "/dashboard/clients", id: "nav-clients" },
 ];
 
 type SidebarProps = {
@@ -77,6 +77,7 @@ export default function Sidebar({ onItemClick, mobile = false }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              id={(item as any).id}
               onClick={() => onItemClick?.()} // ensures it closes on mobile
               className={`
                 relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group overflow-hidden

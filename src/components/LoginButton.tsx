@@ -60,13 +60,23 @@ export default function LoginButton() {
 
   // STATE 2: LOGGED OUT (Landing Page Mode)
   return (
-    <button
-      onClick={() => signIn("google")}
-      className="relative group overflow-hidden px-8 py-3 rounded-full bg-white text-black font-semibold transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]"
-    >
-      <span className="relative z-10">Get Started</span>
-      {/* Subtle hover gradient */}
-      <div className="absolute inset-0 bg-linear-to-r from-blue-100 to-purple-100 opacity-0 group-hover:opacity-100 transition-opacity" />
-    </button>
+    <div className="flex flex-col items-center gap-4 w-full">
+      {/* Standard Google Login */}
+      <button
+        onClick={() => signIn("google")}
+        className="w-full relative group overflow-hidden px-8 py-3 rounded-full bg-white text-black font-semibold transition-all hover:scale-105 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] flex items-center justify-center gap-2"
+      >
+        <span className="relative z-10">Get Started with Google</span>
+        <div className="absolute inset-0 bg-linear-to-r from-blue-100 to-purple-100 opacity-0 group-hover:opacity-100 transition-opacity" />
+      </button>
+
+      {/* Demo Login */}
+      <button
+        onClick={() => signIn("credentials", { email: "demo@focusflow.app", password: "demo" })}
+        className="text-sm text-gray-400 hover:text-white transition-colors underline decoration-dotted underline-offset-4"
+      >
+        Try Demo Account
+      </button>
+    </div>
   );
 }

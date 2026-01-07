@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { Menu } from "lucide-react";
+import DashboardTour from "@/components/DashboardTour";
 
 export default function DashboardLayout({
   children,
@@ -13,6 +14,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen flex w-full relative">
+      <DashboardTour />
       <div className="md:hidden fixed top-0 left-0 w-full h-14 bg-[#0f172a]/80 backdrop-blur-md border-b border-white/10 z-30 flex items-center justify-between px-4">
         <button
           className="p-2 rounded-lg bg-white/10 border border-white/10 text-white"
