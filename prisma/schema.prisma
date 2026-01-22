@@ -11,11 +11,12 @@ generator client {
 
 // 3. DATA MODEL: The Photographer
 model User {
-  id  String  @id @default(cuid())
+  id   String  @id @default(cuid())
   email  String?  @unique
   name  String?
   emailVerified DateTime?
   image String?
+  isDemo    Boolean  @default(false)
 
   accounts Account[]
   sessions Session[]
