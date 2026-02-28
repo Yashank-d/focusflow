@@ -1,4 +1,5 @@
 import LoginButton from "@/components/LoginButton";
+import FocusFlowLogo from "@/components/ui/FocusFlowLogo";
 import Link from "next/link";
 
 // ─── Feature data ────────────────────────────────────────────────────────────
@@ -162,14 +163,7 @@ export default function WelcomePage() {
 
       {/* ── Navbar ─────────────────────────────────────────────────────── */}
       <header className="relative z-20 w-full px-6 md:px-12 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white font-bold text-sm font-serif">
-            F
-          </div>
-          <span className="text-sm font-medium text-white/80 tracking-wide">
-            FocusFlow
-          </span>
-        </div>
+        <FocusFlowLogo size="sm" showSubtitle={false} />
         <nav className="hidden md:flex items-center gap-8 text-[13px] text-gray-400">
           <a href="#features" className="hover:text-white transition-colors">
             Features
@@ -773,10 +767,8 @@ export default function WelcomePage() {
       {/* ── Footer ────────────────────────────────────────────────────────── */}
       <footer className="relative z-10 border-t border-white/5 py-8 px-6 md:px-12">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-md bg-white/10 border border-white/10 flex items-center justify-center text-white font-bold text-xs font-serif">
-              F
-            </div>
+          <div className="flex items-center gap-3">
+            <FocusFlowLogo size="sm" showText={false} />
             <span className="text-xs text-gray-500">FocusFlow</span>
             <span className="text-gray-700 text-xs mx-1">·</span>
             <span className="text-[11px] text-gray-700">
